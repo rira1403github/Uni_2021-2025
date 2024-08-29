@@ -1,0 +1,12 @@
+#NAM install 
+
+# version 1.15 does not work! use 1.14
+
+# Run this to install
+wget https://raw.githubusercontent.com/Cipher7/Uni-2021-2025/main/3rd%20Year/5th%20Sem/CN-Lab/Notes/nam-install.sh
+chmod +x nam-install.sh
+sudo ./nam-install.sh 
+# .nam = Network Animation File
+# .tcl = Tool command language
+# .tr  = Trace file
+# CBR = constant bitrate

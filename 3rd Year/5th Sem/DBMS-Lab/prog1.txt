@@ -1,0 +1,67 @@
+/*
+QUESTION 1
+*/
+
+
+CREATE DATABASE movie_cs151;
+
+use movie_cs151;
+
+// Creating tables
+
+create table ACTOR(Act_id int primary key, Act_Name varchar(40), Act_gender char);
+
+create table DIRECTOR(Dir_id int primary key, Dir_Name varchar(40), Dir_phone int(10));
+
+create table MOVIES(Mov_id int primary key, Mov_Title varchar(40), Movie_Year int(4), Movie_Lang varchar(40) , Dir_id int, foreign key (Dir_id) references DIRECTOR(Dir_id));
+
+create table MOVIE_CAST(Act_id int, Mov_id int, Role varchar(40), primary key (Act_id, Mov_id), foreign key(Act_id) references ACTOR(Act_id), foreign key(Mov_id) references MOVIES(Mov_id));
+
+create table RATING(Mov_id int, Rev_stars int, primary key(Mov_id), foreign key(Mov_id) references MOVIES(Mov_id));
+
+
+// Inserting values
+
+insert into ACTOR values(101, "John Abraham", 'M');
+insert into ACTOR values(102, "John Mohan", 'M');
+insert into ACTOR values(103, "Deepika", 'F');
+insert into ACTOR values(104, "Anushka", 'F');
+insert into ACTOR values(105, "Disha", 'F');
+
+insert into DIRECTOR values(201, "Hitchcock", 908627187);
+insert into DIRECTOR values(202, "Steven Spielberg", 908653287);
+insert into DIRECTOR values(203, "Hitchcock", 908847987);
+insert into DIRECTOR values(204, "Martin", 956827187);
+insert into DIRECTOR values(205, "Nolan", 9186547187);
+
+insert into MOVIES values(301, "Bambi", 2001, "English", 201);
+insert into MOVIES values(302, "KGF", 2004, "Kannada", 202);
+insert into MOVIES values(303, "Kravat", 2009, "Russian", 204);
+insert into MOVIES values(304, "Avengers", 2011, "English", 202);
+insert into MOVIES values(305, "PK", 2019, "Hindi", 203);
+insert into MOVIES values(306, "Dangal", 1990, "Hindi", 202);
+
+insert into MOVIE_CAST values(101, 301, "Lead");
+insert into MOVIE_CAST values(103, 302, "Assistant");
+insert into MOVIE_CAST values(102, 303, "Banker");
+insert into MOVIE_CAST values(105, 304, "Soldier");
+insert into MOVIE_CAST values(104, 305, "King");
+insert into MOVIE_CAST values(102, 304, "Chef");
+insert into MOVIE_CAST values(101, 302, "Chef");
+insert into MOVIE_CAST values(101, 303, "Assistant");
+insert into MOVIE_CAST values(101, 306, "Fighter");
+
+insert into RATING values(301, 3);
+insert into RATING values(302, 2);
+insert into RATING values(303, 4);
+insert into RATING values(304, 5);
+insert into RATING values(305, 1);
+
+
+// Executing statements
+
+1->  select Mov_Title from MOVIES m,DIRECTOR d WHERE m.Dir_id=d.Dir_id AND Dir_Name='Hitchcock';  
+2->  select distinct m.Mov_Title, c.Act_id from MOVIES m, MOVIE_CAST c,ACTOR a WHERE m.Mov_id=c.Mov_id AND c.Act_id in(SELECT c.Act_id FROM MOVIE_CAST c GROUP BY(c.Act_id) HAVING count(c.Mov_id) >= 2);
+3->  select * from(select a.Act_Name from ACTOR a, MOVIES m,MOVIE_CAST mc where a.Act_id=mc.Act_id and mc.Mov_id=m.Mov_id AND m.Movie_Year < 2000) T1 NATURAL JOIN (select a.Act_name from ACTOR a,MOVIES m,MOVIE_CAST mc where a.Act_id=mc.Act_id and mc.Mov_id=m.Mov_id and m.Movie_Year > 2015) T2;
+4->  select m.Mov_Title,max(Rev_stars) as "max_stars" from MOVIES m,RATING r,MOVIE_CAST mc where m.Mov_id=r.Mov_id and mc.Mov_id=m.Mov_id and r.Rev_stars > 0 order by Mov_Title;
+5->  update RATING set Rev_stars=5 where Mov_id in (select Mov_id from MOVIES m,DIRECTOR d where d.Dir_id=m.Dir_id AND Dir_Name="Steven Spielberg"); 

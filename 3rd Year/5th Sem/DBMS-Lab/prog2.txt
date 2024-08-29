@@ -1,0 +1,41 @@
+/*
+Question 2
+*/
+
+create database order_cs151;
+
+use order_cs151;
+
+
+// Table creation
+
+create table SALESMAN(Salesman_id int primary key, Name varchar(50), City varchar(50), Commission varchar(4));
+create table CUSTOMER(Customer_id int primary key, Cust_Name varchar(50), City varchar(50), Grade int, Salesman_id int, foreign key(Salesman_id) references SALESMAN(Salesman_id) on delete set null);
+create table ORDERS(Ord_No int primary key, Purchase_Amt int, Ord_Date date, Customer_id int, Salesman_id int, foreign key(Salesman_id) references SALESMAN(Salesman_id) on delete cascade, foreign key(Customer_id) references CUSTOMER(Customer_id) on delete cascade);
+
+//Inserting values
+insert into SALESMAN values(1000, "Rahul", "Bangalore", "20%");
+insert into SALESMAN values(2000, "Ankita", "Bangalore", "25%");
+insert into SALESMAN values(3000, "Sharma", "Mysore", "30%");
+insert into SALESMAN values(4000, "Anjali", "Delhi", "15%");
+insert into SALESMAN values(5000, "Raj", "Hyderabad", "15%");
+
+insert into CUSTOMER values(1, "Adya", "Bangalore", 100, 1000);
+insert into CUSTOMER values(2, "Banu", "Mangalore", 300, 1000);
+insert into CUSTOMER values(3, "Chethan", "Chennai", 400, 2000);
+insert into CUSTOMER values(4, "Danish", "Bangalore", 200, 2000);
+insert into CUSTOMER values(5, "Esha", "Bangalore", 400, 3000);
+
+insert into ORDERS values(201, 5000, "2020-06-02", 1, 1000);
+insert into ORDERS values(202, 450, "2020-04-09", 1, 2000);
+insert into ORDERS values(203, 1000, "2020-03-15", 3, 2000);
+insert into ORDERS values(204, 3500, "2020-07-09", 4, 3000);
+insert into ORDERS values(205, 550, "2020-05-05", 2, 2000);
+
+// Executing statements
+
+1-> select count(*) from CUSTOMER where Grade > (select avg(Grade) from CUSTOMER where City="Bangalore");
+2-> select Salesman_id,Name from SALESMAN where Salesman_id in(select Salesman_id from CUSTOMER group by Salesman_id having count(Customer_id) > 1); 
+3-> (select distinct S.Salesman_id,S.Name,C.Cust_Name from CUSTOMER C, SALESMAN S where C.Salesman_id=S.Salesman_id and C.City=S.City) UNION (select distinct S.Salesman_id,S.Name,C.Cust_Name from CUSTOMER C, SALESMAN S where C.Salesman_id=S.Salesman_id and C.City!=S.City) UNION (select distinct S.Salesman_id,S.Name,"NO CUSTOMER" from SALESMAN S where Salesman_id NOT IN(select Salesman_id from CUSTOMER)); 
+4-> Create view Highest_Order AS (select Salesman_id,Purchase_Amt,Ord_Date from ORDERS where (Ord_Date,Purchase_Amt) IN (select Ord_Date,max(Purchase_Amt) from ORDERS group by Ord_Date)); 
+5-> delete from SALESMAN where Salesman_id = 1000; 
